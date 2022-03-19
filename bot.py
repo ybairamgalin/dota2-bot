@@ -6,13 +6,17 @@ from messages import Messages
 from keyboards import Keyboards
 from users import Users
 from user import User
+from heroes import Heroes, HeroNotFound
+from hero import Hero
 import config
 
 
 class TelegramBot:
     def __init__(self):
         self.updater = Updater(config.TOKEN)
+
         self.users = Users()
+        self.heroes = Heroes()
 
         self.__add_handlers()
 
@@ -115,10 +119,22 @@ class TelegramBot:
 
         user.state = 0
         self.users.update(user)
+        self.handle_answer(message, user)
 
-        message.reply_markdown(Messages.answer(),
-                               reply_markup=Keyboards.category())
-        message.reply_markdown(Messages.start_message(),
-                                      reply_markup=Keyboards.start_keyboard())
+    def handle_answer(self, message, user):
+        try:
+            hero = self.heroes.get(user)
+        except HeroNotFound:
+            message.reply_markdown(Messages.answer_not_found(),
+                                   reply_markup=Keyboards.start_keyboard())
+
+            return
+        else:
+            message.reply_photo(open(hero.image, "rb"))
+            message.reply_markdown(Messages.answer(hero))
+        finally:
+            message.reply_markdown(Messages.new_start_message(),
+                                   reply_markup=Keyboards.start_keyboard())
+
 
 
