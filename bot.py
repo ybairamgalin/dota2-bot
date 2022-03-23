@@ -21,6 +21,7 @@ class TelegramBot:
         self.__add_handlers()
 
     def __add_handlers(self):
+        """добавляет обработчики событий"""
         dispatcher = self.updater.dispatcher
 
         dispatcher.add_handler(CommandHandler("start", self.on_command_start))
@@ -31,7 +32,7 @@ class TelegramBot:
         self.updater.start_polling()
 
     def on_command_start(self, update: Update, context: CallbackContext):
-        """handles /start command"""
+        """обрабаьывает команду /start"""
         message = update.message
 
         if not self.users.user_in(message.chat_id):
@@ -41,6 +42,7 @@ class TelegramBot:
                                       reply_markup=Keyboards.start_keyboard())
 
     def on_text_message(self, update: Update, context: CallbackContext):
+        """обрабатывает текстовые сообщения"""
         message = update.message
         print(message.text, message.chat_id)
 
@@ -58,6 +60,7 @@ class TelegramBot:
             self.handle_category(user, message)
 
     def handle_played_time(self, user, message):
+        """обрабатывает указанное время игры"""
         user.hours = None
 
         if message.text == "<100":
@@ -80,6 +83,7 @@ class TelegramBot:
                                reply_markup=Keyboards.position())
 
     def handle_role(self, user, message):
+        """обрабатывает указанную роль"""
         user.role = None
 
         if message.text == "1":
@@ -104,6 +108,7 @@ class TelegramBot:
                                reply_markup=Keyboards.category())
 
     def handle_category(self, user, message):
+        """обрабатывает указанную категорию"""
         user.category = None
 
         if message.text == "Сила":
@@ -122,6 +127,7 @@ class TelegramBot:
         self.handle_answer(message, user)
 
     def handle_answer(self, message, user):
+        """обрабатывает пользователя, когда все поля указаны"""
         try:
             hero = self.heroes.get(user)
         except HeroNotFound:

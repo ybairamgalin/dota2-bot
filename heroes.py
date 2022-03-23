@@ -17,7 +17,10 @@ class Heroes:
         self.heroes = heroes_list.heroes
 
     def get(self, user: User):
+        """Функция принимает объект типа User и возвращает подходящего
+        пользователю user героя"""
         possible_answers = []
+        print(user)
 
         for hero in self.heroes:
             if hero.time_needed == user.hours and hero.role == user.role and \
